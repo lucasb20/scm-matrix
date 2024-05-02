@@ -9,10 +9,12 @@ int main(int argc,char **argv){
       exit(1);
   }
 
+  char *dir = argv[1];
+
   clock_t begin,end;
 
   begin = clock();
-  alg();
+  AlgTest(dir);
   end = clock();
   double tempo_total = (double)(end - begin)/CLOCKS_PER_SEC;
   printf("Tempo total: %lfs\n(%lf min)", tempo_total,tempo_total/60);
