@@ -69,3 +69,21 @@ void ImageFilter(struct Image src, struct Image *des){
         }
     }
 }
+
+void quantizer(struct Image *img, int level){
+    int n = img->maxval + 1 / level;
+    int interval = PowerOf2(n) - 1;
+    int start = 0;
+    int end = interval;
+  
+    for(int k = 0; k < n; k++){
+        for (int i = 0; i < img->width * img->height; i++){
+            if (img->Data[i] >= start && img->Data[i] <= end){
+                img->Data[i] = k;
+            }
+        }
+
+        start = end + 1;
+        end = start + interval;
+    }
+}
