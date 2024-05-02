@@ -43,9 +43,13 @@ void algTest(char* diretorio, int level){
         imageFilter(img, img_filt);
 
         quantizer(&img, level);
+        quantizer(&img_filt, level);
+
+        SCM(&img, &img_filt, );
 
         fprintf(file_ptr, "%s, %d, %d\n", dir->d_name);
     }
+
     fclose(file_ptr);
     closedir(d);
 }
@@ -88,4 +92,38 @@ void quantizer(struct Image *img, int level){
         start = end + 1;
         end = start + interval;
     }
+}
+
+void SCM(struct Image *img, struct Image *img_filt, char *filename, int level){
+    unsigned char *matrix=NULL;
+  
+    if(!(matrix = calloc(level*level, sizeof(unsigned char)))){
+        puts("Memória insuficiente.");
+        exit(1);
+    }
+
+    for(int i = 0; i < img->width * img_filt->height; i++){
+        int index = img->Data[i]*level + img_filt->Data[i];
+        matrix[index]++;
+    }
+
+    FILE *fp;
+
+    char archiveName[20];
+    sprintf(archiveName, "SCM_%d.txt", level);
+
+    fp = fopen(archiveName,"a+");
+
+    if(fp==NULL){
+        puts("Erro ao abrir o arquivo");
+        exit(1);
+    }
+
+    for(int i = 0; i < level * level; i++){
+        fprintf(fp, "%d, ", matrix[i]);
+    }
+
+    fprintf(fp, "%c\n", *filename);
+
+    fclose(fp);
 }

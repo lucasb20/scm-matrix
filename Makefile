@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
 
-SRCS = main.c pgm.c
+SRCS = main.c pgm.c funcs.c utils.c
 OBJS = $(SRCS:.c=.o)
 TARGET = hello.out
 

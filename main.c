@@ -7,6 +7,7 @@
 int main(int argc,char **argv){
   if(argc != 3){
       printf("Formato: %s <diretório> <nível de quantização>\n", *argv);
+      puts("Níveis de Quantização: 8, 16, 32, 64, 128, 256");
       exit(1);
   }
 
@@ -19,7 +20,7 @@ int main(int argc,char **argv){
   algTest(dir, level);
   end = clock();
   double tempo_total = (double)(end - begin)/CLOCKS_PER_SEC;
-  printf("Tempo total: %lfs\n(%lf min)", tempo_total,tempo_total/60);
+  printf("Tempo total: %lfs\n(%lf min)", tempo_total, tempo_total/60);
 
   return 0;
 }
