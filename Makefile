@@ -1,22 +1,20 @@
-all: prog.exe
+CC = gcc
+CFLAGS = -Wall -Wextra
 
-prog.exe: main.o readPGM.o menu.o quantization.o computeMatrix.o
-	gcc -o prog.exe main.o readPGM.o menu.o quantization.o computeMatrix.o
+SRCS = main.c pgm.c
+OBJS = $(SRCS:.c=.o)
+TARGET = hello.out
 
-main.o: main.c
-	gcc -o main.o -c main.c
+all: $(TARGET)
 
-readPGM.o: readPGM.c
-	gcc -o readPGM.o -c readPGM.c
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
-menu.o: menu.c
-	gcc -o menu.o -c menu.c
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-quantization.o: quantization.c
-	gcc -o quantization.o -c quantization.c
-
-computeMatrix.o: computeMatrix.c
-	gcc -o computeMatrix.o -c computeMatrix.c
+debug: CFLAGS += -g
+debug: all
 
 clean:
-	rm -f *.o prog.exe
+	rm -f $(OBJS) $(TARGET)
