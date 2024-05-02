@@ -1,4 +1,4 @@
 
-void AlgTest(char*);
-void ImageFilter(struct Image, struct Image*);
+void algTest(char*,int);
+void imageFilter(struct Image, struct Image*);
 void quantizer(struct Image*,int);

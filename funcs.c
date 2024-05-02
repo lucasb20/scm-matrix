@@ -4,7 +4,7 @@
 #include "lib/pgm.h"
 #include "lib/utils.h"
 
-void AlgTest(char* diretorio){
+void algTest(char* diretorio, int level){
     DIR *d;
     struct dirent *dir;
 
@@ -40,7 +40,9 @@ void AlgTest(char* diretorio){
 
         readPGMImage(&img, name);
 
-        ImageFilter(img, img_filt);
+        imageFilter(img, img_filt);
+
+        quantizer(&img, level);
 
         fprintf(file_ptr, "%s, %d, %d\n", dir->d_name);
     }
@@ -48,7 +50,7 @@ void AlgTest(char* diretorio){
     closedir(d);
 }
 
-void ImageFilter(struct Image src, struct Image *des){
+void imageFilter(struct Image src, struct Image *des){
     des->type = src.type;
     des->height = src.height;
     des->width = src.width;
