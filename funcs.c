@@ -6,6 +6,8 @@
 #include "lib/funcs.h"
 #include "lib/utils.h"
 
+#define KERNEL_SIZE 3
+
 void algTest(char* diretorio, int level){
     DIR *d;
     struct dirent *dir;
@@ -65,7 +67,7 @@ void imageFilter(struct Image src, struct Image *des){
 
     for(int i = 0; i < src.height; i++){
         for(int j = 0; j < src.width; j++){
-            des->Data[i*src.width + j] = kernel_mean(src, i, j, 3);
+            des->Data[i*src.width + j] = kernel_mean(src, i, j, KERNEL_SIZE);
         }
     }
 }
