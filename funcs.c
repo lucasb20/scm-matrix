@@ -9,6 +9,12 @@
 void algTest(char* diretorio, int level){
     DIR *d;
     struct dirent *dir;
+
+    if(!(d = opendir(diretorio))){
+        printf("Erro ao abrir o diretório '%s'.\n", diretorio);
+        exit(1);
+    }
+    
     FILE *fp;
 
     char archiveName[20];
@@ -16,13 +22,6 @@ void algTest(char* diretorio, int level){
 
     if(!(fp = fopen(archiveName,"w"))){
         puts("Erro ao abrir o arquivo");
-        exit(1);
-    }
-
-    d = opendir(diretorio);
-
-    if(!d){
-        printf("Erro ao abrir o diretório '%s'.\n", diretorio);
         exit(1);
     }
 
@@ -45,6 +44,7 @@ void algTest(char* diretorio, int level){
 
         SCM(img, img_filt, dir->d_name[0], fp, level);
 
+        free(img.Data);
         free(img_filt.Data);
     }
 
@@ -76,25 +76,16 @@ void imageFilter(struct Image src, struct Image *des){
 
 void quantizer(struct Image *img, int level){
     int n = (img->maxval + 1) / level;
-    int start = 0;
-    int end = n - 1;
 
-    for(int k = 0; k < level; k++){
-        for (int i = 0; i < img->width * img->height; i++){
-            if (img->Data[i] >= start && img->Data[i] <= end){
-                img->Data[i] = k;
-            }
-        }
-
-        start = end + 1;
-        end = start + n - 1;
+    for (int i = 0; i < img->width * img->height; i++){
+        img->Data[i] /= n;
     }
 }
 
 void SCM(struct Image img, struct Image img_filt, char label, FILE *fp , int level){
-    unsigned char *matrix = NULL;
+    unsigned *matrix = NULL;
   
-    if(!(matrix = calloc(level*level, sizeof(unsigned char)))){
+    if(!(matrix = calloc(level*level, sizeof(unsigned)))){
         puts("Memória insuficiente.");
         exit(1);
     }
@@ -105,7 +96,7 @@ void SCM(struct Image img, struct Image img_filt, char label, FILE *fp , int lev
     }
 
     for(int i = 0; i < level * level; i++){
-        fprintf(fp, "%hhu, ", matrix[i]);
+        fprintf(fp, "%d, ", matrix[i]);
     }
 
     free(matrix);
