@@ -63,10 +63,6 @@ void imageFilter(struct Image src, struct Image *des){
         exit(1);
     }
 
-    for(int i = 0; i < src.height * src.width; i++){
-        src.Data[i] = src.Data[i];
-    }
-
     for(int i = 0; i < src.height; i++){
         for(int j = 0; j < src.width; j++){
             des->Data[i*src.width + j] = kernel_mean(src, i, j, 3);
