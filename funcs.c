@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <string.h>
 #include "lib/pgm.h"
+#include "lib/funcs.h"
 #include "lib/utils.h"
 
 void algTest(char* diretorio, int level){
@@ -43,11 +45,13 @@ void algTest(char* diretorio, int level){
         imageFilter(img, img_filt);
 
         quantizer(&img, level);
-        quantizer(&img_filt, level);
+        quantizer(img_filt, level);
 
-        SCM(&img, &img_filt, );
+        SCM(&img, img_filt, dir->d_name, level);
 
-        fprintf(file_ptr, "%s, %d, %d\n", dir->d_name);
+        fprintf(file_ptr, "%s\n", dir->d_name);
+
+        free(img_filt->Data);
     }
 
     fclose(file_ptr);
@@ -77,12 +81,11 @@ void imageFilter(struct Image src, struct Image *des){
 }
 
 void quantizer(struct Image *img, int level){
-    int n = img->maxval + 1 / level;
-    int interval = PowerOf2(n) - 1;
+    int n = (img->maxval + 1) / level;
     int start = 0;
-    int end = interval;
-  
-    for(int k = 0; k < n; k++){
+    int end = n - 1;
+
+    for(int k = 0; k < level; k++){
         for (int i = 0; i < img->width * img->height; i++){
             if (img->Data[i] >= start && img->Data[i] <= end){
                 img->Data[i] = k;
@@ -90,7 +93,7 @@ void quantizer(struct Image *img, int level){
         }
 
         start = end + 1;
-        end = start + interval;
+        end = start + n - 1;
     }
 }
 
@@ -114,13 +117,13 @@ void SCM(struct Image *img, struct Image *img_filt, char *filename, int level){
 
     fp = fopen(archiveName,"a+");
 
-    if(fp==NULL){
+    if(fp == NULL){
         puts("Erro ao abrir o arquivo");
         exit(1);
     }
 
     for(int i = 0; i < level * level; i++){
-        fprintf(fp, "%d, ", matrix[i]);
+        fprintf(fp, "%hhu, ", matrix[i]);
     }
 
     fprintf(fp, "%c\n", *filename);
