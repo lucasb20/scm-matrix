@@ -19,10 +19,3 @@ int kernel_mean(struct Image obj, int x, int y, int size){
 
     return m;
 }
-
-int PowerOf2(int x){
-    if(x == 0){
-        return 1;
-    }
-    return PowerOf2(x - 1)*2;
-}
