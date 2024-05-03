@@ -12,13 +12,6 @@ void algTest(char* diretorio, int level){
 
     d = opendir(diretorio);
 
-    FILE *file_ptr = fopen("alg.txt","w");
-
-    if(!(file_ptr)){
-        puts("Erro ao abrir criar o arquivo.");
-        exit(1);
-    }
-
     if(!d){
         printf("Erro ao abrir o diretório '%s'.\n", diretorio);
         exit(1);
@@ -49,12 +42,9 @@ void algTest(char* diretorio, int level){
 
         SCM(&img, img_filt, dir->d_name, level);
 
-        fprintf(file_ptr, "%s\n", dir->d_name);
-
         free(img_filt->Data);
     }
 
-    fclose(file_ptr);
     closedir(d);
 }
 
@@ -126,7 +116,7 @@ void SCM(struct Image *img, struct Image *img_filt, char *filename, int level){
         fprintf(fp, "%hhu, ", matrix[i]);
     }
 
-    fprintf(fp, "%c\n", *filename);
+    fprintf(fp, "%s\n", *filename == '0'?"epithelium":"stroma");
 
     fclose(fp);
 }

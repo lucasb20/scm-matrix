@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <time.h>
-#include <funcs.h>
+#include "lib/funcs.h"
  
 int main(int argc,char **argv){
   if(argc != 3){
