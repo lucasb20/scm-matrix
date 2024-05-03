@@ -9,6 +9,15 @@
 void algTest(char* diretorio, int level){
     DIR *d;
     struct dirent *dir;
+    FILE *fp;
+
+    char archiveName[20];
+    sprintf(archiveName, "SCM_%d.txt", level);
+
+    if(!(fp = fopen(archiveName,"w"))){
+        puts("Erro ao abrir o arquivo");
+        exit(1);
+    }
 
     d = opendir(diretorio);
 
@@ -17,13 +26,7 @@ void algTest(char* diretorio, int level){
         exit(1);
     }
 
-    struct Image img;
-    struct Image *img_filt;
-
-    if(!(img_filt = malloc(sizeof(struct Image)))){
-        puts("Erro ao alocar memória.");
-        exit(1);
-    }
+    struct Image img, img_filt;
 
     while ((dir = readdir(d)) != NULL){
         if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
@@ -35,16 +38,17 @@ void algTest(char* diretorio, int level){
 
         readPGMImage(&img, name);
 
-        imageFilter(img, img_filt);
+        imageFilter(img, &img_filt);
 
         quantizer(&img, level);
-        quantizer(img_filt, level);
+        quantizer(&img_filt, level);
 
-        SCM(&img, img_filt, dir->d_name, level);
+        SCM(img, img_filt, dir->d_name[0], fp, level);
 
-        free(img_filt->Data);
+        free(img_filt.Data);
     }
 
+    fclose(fp);
     closedir(d);
 }
 
@@ -87,36 +91,23 @@ void quantizer(struct Image *img, int level){
     }
 }
 
-void SCM(struct Image *img, struct Image *img_filt, char *filename, int level){
-    unsigned char *matrix=NULL;
+void SCM(struct Image img, struct Image img_filt, char label, FILE *fp , int level){
+    unsigned char *matrix = NULL;
   
     if(!(matrix = calloc(level*level, sizeof(unsigned char)))){
         puts("Memória insuficiente.");
         exit(1);
     }
 
-    for(int i = 0; i < img->width * img_filt->height; i++){
-        int index = img->Data[i]*level + img_filt->Data[i];
+    for(int i = 0; i < img.width * img_filt.height; i++){
+        int index = img.Data[i]*level + img_filt.Data[i];
         matrix[index]++;
-    }
-
-    FILE *fp;
-
-    char archiveName[20];
-    sprintf(archiveName, "SCM_%d.txt", level);
-
-    fp = fopen(archiveName,"a+");
-
-    if(fp == NULL){
-        puts("Erro ao abrir o arquivo");
-        exit(1);
     }
 
     for(int i = 0; i < level * level; i++){
         fprintf(fp, "%hhu, ", matrix[i]);
     }
 
-    fprintf(fp, "%s\n", *filename == '0'?"epithelium":"stroma");
-
-    fclose(fp);
+    free(matrix);
+    fprintf(fp, "%s\n", label == '0'?"epithelium":"stroma");
 }
